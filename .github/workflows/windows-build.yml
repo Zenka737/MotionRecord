@@ -35,9 +35,15 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         shell: pwsh
         run: Compress-Archive -Path publish\* -DestinationPath MotionRecord-win-x64.zip
+      - name: Release notes
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          Set-Content release-notes.md 'Pre-release. Windows - unzip MotionRecord-win-x64.zip and run MotionRecord.exe. macOS - MotionRecord-macOS.zip.'
       - name: Create pre-release with the Windows build
         if: startsWith(github.ref, 'refs/tags/v')
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${{ github.ref_name }}" MotionRecord-win-x64.zip --prerelease --title "MotionRecord ${{ github.ref_name }}" --notes "Pre-release. Windows: распакуйте MotionRecord-win-x64.zip и запустите MotionRecord.exe. macOS: MotionRecord-macOS.zip."
+        run: |
+          gh release create "${{ github.ref_name }}" MotionRecord-win-x64.zip --prerelease --title "MotionRecord ${{ github.ref_name }}" --notes-file release-notes.md

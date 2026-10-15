@@ -38,7 +38,7 @@
 
 ## Видео
 
-**[Как скачать и запустить за 27 секунд →](https://github.com/Zenka737/MotionRecord/blob/main/docs/tutorial.mp4)**
+**[Как скачать и запустить за 47 секунд →](https://youtu.be/92_hSK1_By4)**
 
 ---
 

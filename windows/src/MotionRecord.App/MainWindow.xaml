@@ -1,0 +1,121 @@
+<Window x:Class="MotionRecord.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MotionRecord.App"
+        Title="MotionRecord" Width="1360" Height="840" MinWidth="1000" MinHeight="640"
+        Background="#16161B" Foreground="#E8E8EE" FontFamily="Segoe UI" FontSize="13">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="0,0,6,6"/>
+            <Setter Property="Background" Value="#2A2A33"/>
+            <Setter Property="Foreground" Value="#E8E8EE"/>
+            <Setter Property="BorderBrush" Value="#3A3A46"/>
+        </Style>
+        <Style TargetType="TextBlock"><Setter Property="Foreground" Value="#E8E8EE"/></Style>
+        <Style TargetType="CheckBox"><Setter Property="Foreground" Value="#E8E8EE"/><Setter Property="Margin" Value="0,4"/></Style>
+        <Style x:Key="Caption" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#9A9AAA"/><Setter Property="Margin" Value="0,10,0,2"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="52"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top bar: recording -->
+        <Border Grid.Row="0" Background="#1D1D24" BorderBrush="#2A2A33" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" Margin="12,0" VerticalAlignment="Center">
+                <Button x:Name="BtnRecord" Content="● Запись" Background="#C62828" Foreground="White" MinWidth="130" Margin="0,0,10,0" Click="OnRecordClick"/>
+                <TextBlock Text="FPS" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <ComboBox x:Name="CmbFps" Width="70" SelectedIndex="0" Margin="0,0,14,0">
+                    <ComboBoxItem Content="30"/><ComboBoxItem Content="24"/><ComboBoxItem Content="60"/>
+                </ComboBox>
+                <TextBlock x:Name="TxtStatus" VerticalAlignment="Center" Foreground="#9A9AAA"
+                           Text="Готово. Горячая клавиша записи: Ctrl+Shift+R"/>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="210"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="270"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Library -->
+            <DockPanel Grid.Column="0" Margin="10">
+                <TextBlock DockPanel.Dock="Top" Text="Записи" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                <StackPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
+                    <Button Content="Обновить" Click="OnRefreshLibrary"/>
+                    <Button Content="Открыть папку" Click="OnOpenLibraryFolder"/>
+                </StackPanel>
+                <ListBox x:Name="LibList" Background="#1D1D24" Foreground="#E8E8EE" BorderBrush="#2A2A33"
+                         SelectionChanged="OnLibrarySelected"/>
+            </DockPanel>
+
+            <!-- Preview + timeline -->
+            <Grid Grid.Column="1" Margin="0,10,0,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="44"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Background="#0E0E12" CornerRadius="6">
+                    <Grid>
+                        <Image x:Name="PreviewImage" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <TextBlock x:Name="TxtEmpty" Text="Выберите запись слева или нажмите «Запись»" Foreground="#6A6A7A"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="BtnPlay" Content="▶ Играть" MinWidth="90" Margin="0,0,10,0" Click="OnPlayClick"/>
+                    <TextBlock x:Name="TxtTime" Text="0:00.0 / 0:00.0" VerticalAlignment="Center" Margin="0,0,0,6" FontFamily="Consolas"/>
+                </StackPanel>
+                <local:TimelineControl x:Name="Timeline" Grid.Row="2"/>
+            </Grid>
+
+            <!-- Inspector -->
+            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" Margin="0,10,10,10">
+                <StackPanel>
+                    <TextBlock Text="Монтаж" FontWeight="SemiBold"/>
+                    <WrapPanel Margin="0,6,0,0">
+                        <Button Content="Разрезать (S)" Click="OnSplit"/>
+                        <Button Content="+ Зум (Z)" Click="OnAddZoom"/>
+                        <Button Content="+ Текст (T)" Click="OnAddText"/>
+                        <Button Content="Удалить (Del)" Click="OnDelete"/>
+                        <Button Content="Отменить (Ctrl+Z)" Click="OnUndo"/>
+                    </WrapPanel>
+                    <TextBlock Style="{StaticResource Caption}" Text="Скорость выбранного фрагмента"/>
+                    <ComboBox x:Name="CmbSpeed" SelectionChanged="OnSpeedChanged"/>
+
+                    <TextBlock Text="Зум" FontWeight="SemiBold" Margin="0,16,0,0"/>
+                    <CheckBox x:Name="ChkAutoZoom" Content="Авто-зум по кликам" Click="OnSettingChanged"/>
+                    <TextBlock Style="{StaticResource Caption}" Text="Сила зума"/>
+                    <Slider x:Name="SldZoom" Minimum="1" Maximum="4" ValueChanged="OnSliderChanged"/>
+
+                    <TextBlock Text="Курсор" FontWeight="SemiBold" Margin="0,16,0,0"/>
+                    <CheckBox x:Name="ChkShowCursor" Content="Показывать курсор" Click="OnSettingChanged"/>
+                    <CheckBox x:Name="ChkRipple" Content="Волна при клике" Click="OnSettingChanged"/>
+                    <TextBlock Style="{StaticResource Caption}" Text="Сглаживание"/>
+                    <Slider x:Name="SldSmooth" Minimum="0" Maximum="1" ValueChanged="OnSliderChanged"/>
+                    <TextBlock Style="{StaticResource Caption}" Text="Размер"/>
+                    <Slider x:Name="SldCursorSize" Minimum="0.6" Maximum="3" ValueChanged="OnSliderChanged"/>
+
+                    <TextBlock Text="Кадр" FontWeight="SemiBold" Margin="0,16,0,0"/>
+                    <TextBlock Style="{StaticResource Caption}" Text="Формат"/>
+                    <ComboBox x:Name="CmbAspect" SelectionChanged="OnAspectChanged"/>
+                    <TextBlock Style="{StaticResource Caption}" Text="Поля"/>
+                    <Slider x:Name="SldPadding" Minimum="0" Maximum="0.15" ValueChanged="OnSliderChanged"/>
+                    <TextBlock Style="{StaticResource Caption}" Text="Скругление"/>
+                    <Slider x:Name="SldCorner" Minimum="0" Maximum="48" ValueChanged="OnSliderChanged"/>
+
+                    <Button x:Name="BtnExport" Content="Экспорт в MP4…" Margin="0,18,0,6" Background="#3A6EDC" Foreground="White" Click="OnExportClick"/>
+                    <ProgressBar x:Name="ExportBar" Height="6" Minimum="0" Maximum="1" Visibility="Collapsed"/>
+                    <TextBlock x:Name="TxtExport" Foreground="#9A9AAA" TextWrapping="Wrap"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

@@ -36,6 +36,12 @@
 
 ---
 
+## Видео
+
+**[Как скачать и запустить за 27 секунд →](https://github.com/Zenka737/MotionRecord/blob/main/docs/tutorial.mp4)**
+
+---
+
 ## Две версии
 
 | | **macOS** | **Windows** |
@@ -77,7 +83,8 @@ cd windows
 
 Подробная инструкция и список проверок: [`windows/README.md`](windows/README.md).
 
-Готовый `.exe` собирается автоматически: **Actions → windows-build → Artifacts**.
+Готовый `.exe`: **Releases → MotionRecord-win-x64.zip** (распаковать и запустить `MotionRecord.exe`).
+Сборка идёт автоматически: **Actions → windows-build → Artifacts**.
 
 ---
 

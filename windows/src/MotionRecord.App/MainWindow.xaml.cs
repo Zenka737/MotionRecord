@@ -36,9 +36,40 @@ public partial class MainWindow : Window
         foreach (var s in Speeds) CmbSpeed.Items.Add($"{s:0.##}×");
         Timeline.Seek += t => SetPlayhead(t, true);
         _timer.Tick += OnTick;
-        Loaded += (_, _) => { RefreshLibrary(); CheckFfmpeg(); };
+        Loaded += (_, _) => { TxtLibPath.Text = LibraryRoot.Replace(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "~"); RefreshLibrary(); CheckFfmpeg(); ShowMainTab("Record"); };
         Closing += (_, _) => { _exportCts?.Cancel(); _preview?.Dispose(); };
         PreviewKeyDown += OnKey;
+    }
+
+    // ---- window chrome / tabs (mac-style header) -----------------------------------------------------------------
+    void OnClose(object s, RoutedEventArgs e) => Close();
+    void OnMinimize(object s, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+    void OnMaximize(object s, RoutedEventArgs e) => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+
+    void OnMainTab(object s, RoutedEventArgs e) { if (s is System.Windows.Controls.RadioButton { Tag: string t }) ShowMainTab(t); }
+
+    void ShowMainTab(string tab)
+    {
+        if (ViewRecord == null) return;
+        ViewRecord.Visibility = tab == "Record" ? Visibility.Visible : Visibility.Collapsed;
+        ViewEditor.Visibility = tab == "Editor" ? Visibility.Visible : Visibility.Collapsed;
+        ViewLibrary.Visibility = tab == "Library" ? Visibility.Visible : Visibility.Collapsed;
+        if (tab == "Library") RefreshLibrary();
+    }
+
+    void OnInspectorTab(object s, RoutedEventArgs e)
+    {
+        if (PanVideo == null || s is not System.Windows.Controls.RadioButton { Tag: string t }) return;
+        PanVideo.Visibility = t == "Video" ? Visibility.Visible : Visibility.Collapsed;
+        PanCut.Visibility = t == "Cut" ? Visibility.Visible : Visibility.Collapsed;
+        PanZoom.Visibility = t == "Zoom" ? Visibility.Visible : Visibility.Collapsed;
+        PanCursor.Visibility = t == "Cursor" ? Visibility.Visible : Visibility.Collapsed;
+        PanExport.Visibility = t == "Export" ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    void OnOpenVideo(object s, RoutedEventArgs e)
+    {
+        TabLibrary.IsChecked = true;   // recordings live in the library; same flow as "Открыть видео…" on macOS
     }
 
     // ---- hotkey ---------------------------------------------------------------------------------------------------
@@ -77,14 +108,14 @@ public partial class MainWindow : Window
             if (ff == null) { MessageBox.Show("Нужен ffmpeg.exe рядом с приложением (см. README)."); return; }
             _busy = true;
             StopPlayback();
-            for (var i = 3; i > 0; i--) { BtnRecord.Content = $"Старт через {i}…"; await Task.Delay(1000); }
+            for (var i = 3; i > 0; i--) { BtnRecord.Content = i.ToString(); TxtRecTitle.Text = $"Старт через {i}…"; await Task.Delay(1000); }
             Directory.CreateDirectory(LibraryRoot);
-            var fps = int.Parse(((System.Windows.Controls.ComboBoxItem)CmbFps.SelectedItem).Content.ToString()!);
+            var fps = Fps60.IsChecked == true ? 60 : Fps24.IsChecked == true ? 24 : 30;
             _rec = new ScreenRecorder(LibraryRoot, fps, ff);
             WindowState = WindowState.Minimized;
             await Task.Delay(400);                      // let the minimize animation finish before the first frame
             _rec.Start();
-            BtnRecord.Content = "■ Стоп (Ctrl+Shift+R)";
+            BtnRecord.Content = "Стоп"; TxtRecTitle.Text = "Идёт запись";
             TxtStatus.Text = "Идёт запись… курсор и клики пишутся отдельно от картинки.";
             _busy = false;
         }
@@ -94,9 +125,9 @@ public partial class MainWindow : Window
             var rec = _rec; _rec = null;
             string dir;
             try { dir = await Task.Run(() => rec.Stop()); }
-            catch (Exception ex) { WindowState = WindowState.Normal; BtnRecord.Content = "● Запись"; _busy = false; MessageBox.Show(ex.Message); return; }
+            catch (Exception ex) { WindowState = WindowState.Normal; BtnRecord.Content = "Запись"; TxtRecTitle.Text = "Готов к записи"; _busy = false; MessageBox.Show(ex.Message); return; }
             WindowState = WindowState.Normal; Activate();
-            BtnRecord.Content = "● Запись";
+            BtnRecord.Content = "Запись"; TxtRecTitle.Text = "Готов к записи";
             TxtStatus.Text = "Запись сохранена: " + dir;
             _busy = false;
             RefreshLibrary(Path.GetFileName(dir));
@@ -112,6 +143,7 @@ public partial class MainWindow : Window
             foreach (var d in Directory.GetDirectories(LibraryRoot).OrderByDescending(x => x))
                 if (File.Exists(Path.Combine(d, "meta.json"))) LibList.Items.Add(Path.GetFileName(d));
         _loading = false;
+        LibEmpty.Visibility = LibList.Items.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         if (select != null) LibList.SelectedItem = select;
     }
 
@@ -121,6 +153,7 @@ public partial class MainWindow : Window
     {
         if (_loading || LibList.SelectedItem is not string name) return;
         OpenRecording(Path.Combine(LibraryRoot, name));
+        _loading = true; LibList.SelectedIndex = -1; _loading = false;
     }
 
     void OpenRecording(string dir)
@@ -132,6 +165,9 @@ public partial class MainWindow : Window
         _model.Changed += OnModelChanged;
         Timeline.Model = _model;
         TxtEmpty.Visibility = Visibility.Collapsed;
+        TxtTitle.Text = Path.GetFileName(dir);
+        TxtMeta.Text = $"{_model.Meta.Width}×{_model.Meta.Height} · {_model.Meta.Fps} fps";
+        TabEditor.IsChecked = true;
         _preview = new PreviewService(_model, bmp => PreviewImage.Source = bmp);
         if (!_preview.HasFfmpeg) TxtStatus.Text = "Предпросмотр без видео: нет ffmpeg.exe.";
         LoadInspector();
@@ -228,10 +264,10 @@ public partial class MainWindow : Window
         if (_model == null) return;
         if (_playhead >= _model.OutputDuration - 0.05) _playhead = 0;
         _playing = true; _playFrom = _playhead; _playClock.Restart(); _timer.Start();
-        BtnPlay.Content = "❚❚ Пауза";
+        BtnPlay.Content = "❚❚";
     }
 
-    void StopPlayback() { _playing = false; _timer.Stop(); BtnPlay.Content = "▶ Играть"; }
+    void StopPlayback() { _playing = false; _timer.Stop(); BtnPlay.Content = "▶"; }
 
     void OnTick(object? s, EventArgs e)
     {
@@ -298,7 +334,7 @@ public partial class MainWindow : Window
         if (proj.ExportFormat == ExportFormat.gif || proj.ExportFormat == ExportFormat.mov) proj.ExportFormat = ExportFormat.mp4H264;
         _exportCts = new CancellationTokenSource();
         var ct = _exportCts.Token;
-        BtnExport.Content = "Отменить экспорт"; ExportBar.Visibility = Visibility.Visible; ExportBar.Value = 0; TxtExport.Text = "";
+        BtnExport.Content = "Отменить"; ExportBar.Visibility = Visibility.Visible; ExportBar.Value = 0; TxtExport.Text = "";
         var prog = new Progress<double>(v => { ExportBar.Value = v; TxtExport.Text = $"{v:P0}"; });
         try
         {
@@ -308,6 +344,6 @@ public partial class MainWindow : Window
         }
         catch (OperationCanceledException) { TxtExport.Text = "Экспорт отменён."; try { File.Delete(dlg.FileName); } catch { } }
         catch (Exception ex) { TxtExport.Text = "Ошибка экспорта: " + ex.Message; }
-        finally { _exportCts = null; BtnExport.Content = "Экспорт в MP4…"; ExportBar.Visibility = Visibility.Collapsed; }
+        finally { _exportCts = null; BtnExport.Content = "⇪  Экспорт"; ExportBar.Visibility = Visibility.Collapsed; }
     }
 }

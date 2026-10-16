@@ -13,13 +13,13 @@ public sealed class TimelineControl : FrameworkElement
     public event Action<double>? Seek;
 
     const double LaneH = 34, Gap = 6, RulerH = 22, Handle = 7;
-    static readonly Brush BgBrush = new SolidColorBrush(Color.FromRgb(26, 26, 32));
-    static readonly Brush SegBrush = new SolidColorBrush(Color.FromRgb(58, 110, 220));
-    static readonly Brush ZoomBrush = new SolidColorBrush(Color.FromRgb(139, 92, 246));
-    static readonly Brush AutoBrush = new SolidColorBrush(Color.FromArgb(90, 139, 92, 246));
-    static readonly Brush TextBrush = new SolidColorBrush(Color.FromRgb(214, 158, 46));
+    static readonly Brush BgBrush = new SolidColorBrush(Color.FromRgb(15, 15, 22));
+    static readonly Brush SegBrush = new SolidColorBrush(Color.FromRgb(35, 35, 58));
+    static readonly Brush ZoomBrush = new SolidColorBrush(Color.FromArgb(217, 124, 92, 255));
+    static readonly Brush AutoBrush = new SolidColorBrush(Color.FromArgb(46, 124, 92, 255));
+    static readonly Brush TextBrush = new SolidColorBrush(Color.FromArgb(217, 245, 158, 11));
     static readonly Pen SelPen = new(Brushes.White, 2);
-    static readonly Typeface Face = new("Segoe UI");
+    static readonly Typeface Face = new("Segoe UI Variable Text, Segoe UI");
 
     enum Drag { None, Scrub, Move, TrimL, TrimR }
     Drag _drag; SelKind _dKind; Guid _dId; double _dStartT, _dItemStart, _dItemEnd, _dGrabOffset;
@@ -91,7 +91,7 @@ public sealed class TimelineControl : FrameworkElement
             }
         }
         var px = X(Playhead);
-        dc.DrawLine(new Pen(Brushes.OrangeRed, 2), new Point(px, 0), new Point(px, ActualHeight));
+        dc.DrawLine(new Pen(Brushes.White, 1.5), new Point(px, 0), new Point(px, ActualHeight));
     }
 
     Block? HitBlock(Point pt) =>

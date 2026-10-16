@@ -6,44 +6,60 @@ on:
     tags: ['v*']
   pull_request:
 
+# Least privilege: the build job can only read. Only the release job (tags only) may write.
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
         with:
           dotnet-version: 8.0.x
       - name: Unit tests (Core)
         run: dotnet test windows/tests/MotionRecord.Core.Tests -c Release
       - name: Publish app (win-x64, self-contained)
         run: dotnet publish windows/src/MotionRecord.App -c Release -r win-x64 --self-contained -o publish
-      - name: Add ffmpeg
+      - name: Add ffmpeg (checksum verified)
         shell: pwsh
         run: |
-          Invoke-WebRequest 'https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip' -OutFile ffmpeg.zip
+          $base = 'https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip'
+          Invoke-WebRequest $base -OutFile ffmpeg.zip
+          $expected = ((Invoke-WebRequest "$base.sha256" -UseBasicParsing).Content.Trim() -split '\s+')[0]
+          $actual = (Get-FileHash ffmpeg.zip -Algorithm SHA256).Hash
+          if ($expected -ne $actual) { throw "ffmpeg checksum mismatch: expected $expected, got $actual" }
           Expand-Archive ffmpeg.zip ffmpeg-tmp
           Copy-Item (Get-ChildItem ffmpeg-tmp -Recurse -Filter ffmpeg.exe | Select-Object -First 1).FullName publish\
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: MotionRecord-win-x64
+          path: publish
+
+  release:
+    # Runs only for version tags and is the only place that has write access.
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: MotionRecord-win-x64
           path: publish
       - name: Zip for release
-        if: startsWith(github.ref, 'refs/tags/v')
         shell: pwsh
         run: Compress-Archive -Path publish\* -DestinationPath MotionRecord-win-x64.zip
-      - name: Release notes
-        if: startsWith(github.ref, 'refs/tags/v')
-        shell: pwsh
-        run: |
-          Set-Content release-notes.md 'Pre-release. Windows - unzip MotionRecord-win-x64.zip and run MotionRecord.exe. macOS - MotionRecord-macOS.zip.'
       - name: Create pre-release with the Windows build
-        if: startsWith(github.ref, 'refs/tags/v')
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
         run: |
-          gh release create "${{ github.ref_name }}" MotionRecord-win-x64.zip --prerelease --title "MotionRecord ${{ github.ref_name }}" --notes-file release-notes.md
+          Set-Content release-notes.md 'Pre-release. Windows: unzip MotionRecord-win-x64.zip and run MotionRecord.exe (ffmpeg is included). macOS: build from source, see the README.'
+          gh release create $env:TAG MotionRecord-win-x64.zip --prerelease --title "MotionRecord $env:TAG" --notes-file release-notes.md

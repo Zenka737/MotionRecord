@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; font-src 'none'; media-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mochi Labs Studios</title>
+<meta name="description" content="Mochi Labs Studios — программы, видео и всё, что мы придумываем. Программная студия MochiLabsStudio Motion представляет MotionRecord.">
+<meta property="og:title" content="Mochi Labs Studios">
+<meta property="og:description" content="Программы, видео и всё, что мы придумываем.">
+<meta property="og:image" content="preview.png">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23000'/%3E%3Ccircle cx='32' cy='32' r='14' fill='none' stroke='%23fff' stroke-width='4'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#000; --fg:#fff; --dim:rgba(255,255,255,.55); --faint:rgba(255,255,255,.12); --card:#0b0b0b;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI Variable Display","Segoe UI",Inter,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+/* faint moving grid */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(var(--faint) 1px,transparent 1px),linear-gradient(90deg,var(--faint) 1px,transparent 1px);
+  background-size:72px 72px;opacity:.28;-webkit-mask-image:radial-gradient(ellipse at 50% 20%,#000 0%,transparent 70%);mask-image:radial-gradient(ellipse at 50% 20%,#000 0%,transparent 70%)}
+/* nav */
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(18px);background:rgba(0,0,0,.6);border-bottom:1px solid var(--faint)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em;text-decoration:none}
+.logo{width:26px;height:26px;border-radius:7px;background:#fff;display:grid;place-items:center}
+.logo i{width:12px;height:12px;border:2px solid #000;border-radius:50%;display:block;position:relative}
+.logo i::after{content:"";position:absolute;inset:2.5px;background:#000;border-radius:50%}
+.navr{display:flex;align-items:center;gap:22px;font-size:14px;color:var(--dim)}
+.navr a{text-decoration:none}.navr a:hover{color:#fff}
+.lang{display:flex;border:1px solid var(--faint);border-radius:999px;padding:3px}
+.lang button{background:none;border:0;color:var(--dim);font:600 12px var(--font);padding:5px 10px;border-radius:999px;cursor:pointer}
+.lang button.on{background:#fff;color:#000}
+/* hero */
+.hero{padding:96px 0 40px;text-align:center;position:relative}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--faint);border-radius:999px;padding:6px 14px;font-size:13px;color:var(--dim)}
+.eyebrow b{color:#fff}
+h1{font-size:clamp(44px,8vw,104px);line-height:.98;letter-spacing:-.04em;font-weight:800;margin:26px auto 0;max-width:12ch}
+h1>span:not(.wd){color:var(--dim);font-weight:500}
+.lead{font-size:clamp(18px,2.2vw,22px);color:var(--dim);max-width:640px;margin:26px auto 0}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;border-radius:999px;font-weight:700;font-size:16px;text-decoration:none;transition:transform .2s,background .2s}
+.btn.w{background:#fff;color:#000}.btn.w:hover{transform:translateY(-2px)}
+.btn.g{border:1px solid var(--faint);color:#fff}.btn.g:hover{background:var(--faint)}
+.mochi{width:132px;margin:44px auto 0;display:block;animation:bob 3.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.mochi .eye{transform-origin:center;animation:blink 4.6s infinite}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+/* sections */
+section{padding:96px 0}
+h2{font-size:clamp(32px,5vw,60px);letter-spacing:-.035em;line-height:1.05;font-weight:800}
+h2>span:not(.wd){color:var(--dim);font-weight:500}
+.sub{color:var(--dim);font-size:18px;max-width:560px;margin-top:16px}
+/* interactive demo */
+.demo{margin-top:44px;border:1px solid var(--faint);border-radius:28px;background:var(--card);overflow:hidden;position:relative}
+.demo .bar{height:44px;display:flex;align-items:center;gap:8px;padding:0 18px;border-bottom:1px solid var(--faint)}
+.demo .bar i{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.2)}
+.demo canvas{display:block;width:100%;height:420px;cursor:none;touch-action:none}
+.legend{position:absolute;left:22px;bottom:18px;display:flex;gap:22px;font-size:14px;color:var(--dim);pointer-events:none;flex-wrap:wrap}
+.legend b{color:#fff}
+.legend s{display:inline-block;width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.4);margin-right:8px;text-decoration:none}
+.legend u{display:inline-block;width:22px;height:4px;border-radius:2px;background:#fff;margin-right:8px;vertical-align:middle}
+.hint{position:absolute;right:22px;bottom:18px;font-size:13px;color:var(--dim);font-family:var(--mono);pointer-events:none}
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px}
+.card{border:1px solid var(--faint);border-radius:24px;padding:30px;background:var(--card);transition:transform .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.35)}
+.card .n{font-family:var(--mono);color:var(--dim);font-size:13px}
+.card h3{font-size:24px;letter-spacing:-.02em;margin:46px 0 10px}
+.card p{color:var(--dim)}
+/* download */
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:44px}
+.os{border:1px solid var(--faint);border-radius:28px;padding:34px;background:var(--card)}
+.os h3{font-size:28px;letter-spacing:-.02em}
+.os p{color:var(--dim);margin:8px 0 22px}
+.os .tag{display:inline-block;font:600 12px var(--mono);border:1px solid var(--faint);border-radius:999px;padding:4px 10px;color:var(--dim);margin-bottom:18px}
+pre{background:#000;border:1px solid var(--faint);border-radius:14px;padding:16px;font:13px/1.6 var(--mono);color:#ddd;overflow:auto}
+/* video */
+.video{margin-top:40px;display:flex;align-items:center;gap:20px;border:1px solid var(--faint);border-radius:24px;padding:24px;background:var(--card);text-decoration:none;transition:border-color .2s}
+.video:hover{border-color:#fff}
+.play{width:64px;height:64px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none}
+.play::after{content:"";border-left:18px solid #000;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px}
+.video b{font-size:20px;display:block;letter-spacing:-.01em}
+.video span{color:var(--dim)}
+/* 2.0 teaser */
+.tz{text-align:center;border-top:1px solid var(--faint);border-bottom:1px solid var(--faint);background:radial-gradient(ellipse at 50% 0%,#1b1b1b,#000 70%)}
+.tz .code{font:700 clamp(26px,6.6vw,96px)/1 var(--mono);white-space:nowrap;letter-spacing:-.04em;margin-top:22px}
+.tz .soon{display:inline-block;margin-top:26px;background:#fff;color:#000;font-weight:800;border-radius:999px;padding:12px 30px;font-size:20px}
+.tz p{color:var(--dim);margin:22px auto 0;max-width:520px}
+footer{padding:48px 0;color:var(--dim);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+/* reveal */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .8s,transform .8s}.rv.in{opacity:1;transform:none}
+/* ===== Mochi (floating companion) ===== */
+.mslot{width:200px;height:200px;margin:64px auto 0}
+#mochi{position:fixed;left:0;top:0;width:200px;height:200px;z-index:30;pointer-events:none;will-change:transform;transform-origin:0 0}
+#mochi svg{overflow:visible;filter:drop-shadow(0 12px 30px rgba(255,255,255,.12))}
+#mochi .hop{width:100%;height:100%;animation:float 3.6s ease-in-out infinite;transform-origin:50% 100%}
+#mochi.jump .hop{animation:jump .7s cubic-bezier(.3,1.6,.5,1)}
+@keyframes float{50%{transform:translateY(-7px)}}
+@keyframes jump{0%{transform:scale(1.12,.86)}35%{transform:translateY(-34px) scale(.93,1.1)}70%{transform:translateY(0) scale(1.1,.9)}100%{transform:none}}
+#mochi .blink{transform-box:fill-box;transform-origin:center;animation:blink 4.6s infinite}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+#mochi .eyes{transition:transform .12s ease-out}
+#mochi .e-happy,#mochi .e-wink{display:none}
+#mochi[data-mood=happy] .e-open,#mochi[data-mood=shh] .e-open,#mochi[data-mood=wink] .e-open{display:none}
+#mochi[data-mood=happy] .e-happy,#mochi[data-mood=shh] .e-happy{display:inline}
+#mochi[data-mood=wink] .e-wink{display:inline}
+#mochi[data-mood=happy] .cheek,#mochi[data-mood=shh] .cheek{opacity:.12}
+#mochi .hat{transform-origin:101px 86px;transition:transform .4s cubic-bezier(.3,1.6,.5,1)}
+#mochi[data-mood=happy] .hat{transform:rotate(-6deg) translateY(-3px)}
+#mochi.jump .hat{transform:rotate(8deg) translateY(-8px)}
+.bub{position:absolute;left:50%;top:-6px;transform:translate(-50%,-100%) scale(.6);transform-origin:50% 100%;background:#fff;color:#000;font:700 15px var(--font);padding:8px 16px;border-radius:999px;white-space:nowrap;opacity:0;transition:opacity .3s,transform .4s cubic-bezier(.3,1.6,.5,1)}
+.bub::after{content:"";position:absolute;left:50%;bottom:-6px;width:12px;height:12px;background:#fff;transform:translateX(-50%) rotate(45deg);border-radius:2px}
+.bub.on{opacity:1;transform:translate(-50%,-100%) scale(1)}
+/* ===== scroll progress + text reveal ===== */
+#prog{position:fixed;left:0;top:0;height:3px;width:100%;background:#fff;transform:scaleX(0);transform-origin:0 50%;z-index:60}
+.wd{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.12em;margin-bottom:-.12em}
+.wd>i{display:inline-block;font-style:normal;transform:translateY(105%);transition:transform .9s cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--k)*70ms)}
+.go .wd>i,.in .wd>i{transform:none}
+.sweep span{color:rgba(255,255,255,.22);transition:color .25s}
+.sweep span.lit{color:#fff}
+.demo,.demo.rv.in{transform:scale(var(--ds,.92))}
+.hero .glow{position:absolute;left:50%;top:-10%;width:900px;height:900px;margin-left:-450px;background:radial-gradient(circle,rgba(255,255,255,.1),transparent 62%);pointer-events:none;will-change:transform}
+.confetti{position:fixed;left:0;top:0;pointer-events:none;z-index:50}
+
+.chapter{font:600 13px var(--mono);letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:18px}
+.web{display:grid;grid-template-columns:1fr 60px 1.1fr 60px 1fr;align-items:center;margin-top:48px}
+.node{border:1px solid var(--faint);border-radius:26px;padding:30px 24px;background:var(--card);text-decoration:none;display:block;transition:transform .25s,border-color .25s}
+.node:hover{transform:translateY(-4px);border-color:#fff}
+.node small{display:block;font:600 11px var(--mono);letter-spacing:.12em;color:var(--dim);text-transform:uppercase;margin-bottom:12px}.node.core small{color:rgba(0,0,0,.5)}
+.node small span{display:inline;margin:0;font-size:inherit;color:inherit}
+.node b{display:block;font-size:22px;letter-spacing:-.02em;line-height:1.2}
+.node span{display:block;color:var(--dim);font-size:14px;margin-top:6px}
+.node.core{background:#fff;color:#000;text-align:center;padding:40px 24px;border-color:#fff}
+.node.core span{color:rgba(0,0,0,.55)}
+.link{height:2px;background:var(--faint);position:relative;overflow:hidden}
+.link i{position:absolute;top:0;left:-40%;width:40%;height:100%;background:#fff;animation:flow 2.4s linear infinite}
+@keyframes flow{to{left:100%}}
+@media(max-width:820px){.web{grid-template-columns:1fr;gap:0}.link{width:2px;height:40px;margin:0 auto}.link i{width:100%;height:40%;left:0;top:-40%;animation:flowv 2.4s linear infinite}@keyframes flowv{to{top:100%}}}
+.parts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:820px;margin:38px auto 0;text-align:left}
+.parts a{border:1px solid var(--faint);border-radius:20px;padding:18px 20px;background:rgba(11,11,11,.7);text-decoration:none;transition:transform .25s,border-color .25s}
+.parts a:hover{transform:translateY(-3px);border-color:#fff}
+.parts small{display:block;font:600 11px var(--mono);letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.parts b{display:block;margin-top:10px;font-size:17px;letter-spacing:-.01em;line-height:1.25}
+@media(max-width:820px){.parts{grid-template-columns:1fr}}
+.pres{font:600 13px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+.pres b{color:#fff;font-weight:700}
+.parts em{display:block;font-style:normal;color:var(--dim);font-size:13px;margin-top:6px}
+.tz .pres{margin-bottom:22px}
+@media(max-width:820px){.mslot{width:150px;height:150px}}
+@media(max-width:820px){.grid,.dl{grid-template-columns:1fr}.navr a.hide{display:none}.hero{padding-top:64px}section{padding:64px 0}.demo canvas{height:340px}.hint{display:none}}
+@media(max-width:560px){.navr{gap:14px}.brand{font-size:15px;gap:8px}.logo{width:24px;height:24px}.lead{font-size:17px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.wd>i{transform:none!important}.sweep span{color:#fff!important}}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<nav><div class="wrap">
+  <a class="brand" href="#top"><span class="logo"><i></i></span>Mochi Labs Studios</a>
+  <div class="navr">
+    <a class="hide" href="#programs" data-i="nav_prog">Программы</a>
+    <a class="hide" href="#videos" data-i="nav_vid">Видео</a>
+    <a class="hide" href="#studio" data-i="nav_studio">Студия</a>
+    <a href="https://github.com/Zenka737/MotionRecord" target="_blank" rel="noopener noreferrer">GitHub</a>
+    <div class="lang" role="group" aria-label="Language"><button data-l="ru" class="on">RU</button><button data-l="en">EN</button><button data-l="de">DE</button></div>
+  </div>
+</div></nav>
+
+<header class="hero" id="top"><div class="glow" id="glow"></div><div class="wrap">
+  <div class="eyebrow"><b>03</b><span data-i="eyebrow">программы · видео · студия</span></div>
+  <h1><span data-i="h1a">Mochi Labs</span> <span data-i="h1b" style="color:#fff;font-weight:800">Studios</span></h1>
+  <p class="lead" data-i="lead">Программы, видео и всё, что мы придумываем. Три части одной студии — и все связаны между собой.</p>
+  <div class="cta">
+    <a class="btn w" href="#programs" data-i="cta1">Программы</a>
+    <a class="btn g" href="#videos" data-i="cta2">Видео</a>
+  </div>
+  <div class="parts rv">
+    <a href="#programs"><small>01 · <span data-i="ch1">Программы</span></small><b>MochiLabsStudio Motion</b><em data-i="n1s">представляет MotionRecord</em></a>
+    <a href="#videos"><small>02 · <span data-i="ch2">Видео</span></small><b>MochiLabsStudio Clips</b><em data-i="n3s">представляет ролики и тизеры</em></a>
+    <a href="#studio"><small>03 · <span data-i="ch3">Студия</span></small><b>Mochilabstudios</b><em data-i="n2s">основная студия</em></a>
+  </div>
+  <div class="mslot" id="mslot"></div>
+</div></header>
+
+<section id="programs"><div class="wrap">
+  <div class="chapter rv">01 · <span data-i="ch1">Программы</span></div>
+  <div class="pres rv"><b>MochiLabsStudio Motion</b> <span data-i="pres">представляет</span></div>
+  <h2 class="rv"><span data-i="p_name" style="color:#fff">MotionRecord</span></h2>
+  <p class="sub rv" data-i="p_sub">Запись экрана, после которой видео уже готово. Плавный курсор, авто-зум по кликам, монтаж на таймлайне, экспорт в MP4.</p>
+</div></section>
+<section id="demo" style="padding-top:0"><div class="wrap">
+  <h2 class="rv"><span data-i="demo_a">Двигай мышью.</span><br><span data-i="demo_b" style="color:#fff">Смотри, как это будет в видео.</span></h2>
+  <div class="demo rv">
+    <div class="bar"><i></i><i></i><i></i></div>
+    <canvas id="cv"></canvas>
+    <div class="legend"><span><s></s><span data-i="lg1">как двигалась рука</span></span><span><u></u><b data-i="lg2">как будет в видео</b></span></div>
+    <div class="hint" data-i="hint">кликни — авто-зум</div>
+  </div>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <h2 class="rv" data-i="how_h">Как это работает</h2>
+  <div class="grid">
+    <div class="card rv"><div class="n">01</div><h3 data-i="c1h">Курсор отдельно</h3><p data-i="c1p">Курсор записывается отдельно от картинки. Его можно сгладить, увеличить или заменить уже после записи.</p></div>
+    <div class="card rv"><div class="n">02</div><h3 data-i="c2h">Клики решают, куда смотреть</h3><p data-i="c2p">Камера сама приближается к месту клика и плавно возвращается назад.</p></div>
+    <div class="card rv"><div class="n">03</div><h3 data-i="c3h">Монтаж без лишнего</h3><p data-i="c3p">Разрез, удаление, скорость, ручной зум, текст. Всё на одном таймлайне.</p></div>
+  </div>
+</div></section>
+
+<section id="download"><div class="wrap">
+  <h2 class="rv" data-i="dl_h">Скачать</h2>
+  <p class="sub rv" data-i="dl_s">Две версии: macOS — полная, Windows — первая рабочая сборка.</p>
+  <div class="dl">
+    <div class="os rv"><span class="tag">Windows 10 / 11</span><h3>Windows</h3><p data-i="win_p">Распакуйте архив и запустите MotionRecord.exe. ffmpeg внутри.</p>
+      <a class="btn w" href="https://github.com/Zenka737/MotionRecord/releases/latest" target="_blank" rel="noopener noreferrer"><span data-i="win_btn">Скачать для Windows</span></a></div>
+    <div class="os rv"><span class="tag">macOS 14+</span><h3>macOS</h3><p data-i="mac_p">Пока собирается из исходников. Готовый установщик — вместе с 2.0.</p>
+<pre>git clone https://github.com/Zenka737/MotionRecord
+cd MotionRecord/mac
+./scripts/build_app.sh
+open build/MotionRecord.app</pre></div>
+  </div>
+
+</div></section>
+
+
+
+<section class="tz"><div class="wrap">
+  <div class="pres"><b>MochiLabsStudio Motion</b> <span data-i="pres">представляет</span></div>
+  <div class="eyebrow"><span data-i="tz_e">тссс…</span></div>
+  <div class="code" id="scr" aria-label="MotionRecord 2.0">MotionRecord 2.0</div>
+  <span class="soon" data-i="tz_soon">скоро</span>
+  <p data-i="tz_p">Мы кое-что делаем. Подпишитесь на репозиторий, чтобы не пропустить выход.</p>
+</div></section>
+
+<section id="videos"><div class="wrap">
+  <div class="chapter rv">02 · <span data-i="ch2">Видео</span></div>
+  <div class="pres rv"><b>MochiLabsStudio Clips</b> <span data-i="pres">представляет</span></div>
+  <h2 class="rv" data-i="v_h">Наши ролики</h2>
+  <p class="sub rv" data-i="v_s">Видео-работы студии: туториалы и короткие ролики — чёрно-белые, без воды.</p>
+    <a class="video rv" href="https://youtu.be/92_hSK1_By4" target="_blank" rel="noopener noreferrer"><span class="play"></span><div><b data-i="vid_b">Как скачать и запустить за 47 секунд</b><span data-i="vid_s">Видео-инструкция на YouTube</span></div></a>
+</div></section>
+
+
+
+<section id="studio"><div class="wrap">
+  <div class="chapter rv">03 · <span data-i="ch3">Студия</span></div>
+  <div class="pres rv"><b>Mochilabstudios</b> <span data-i="pres">представляет</span></div>
+  <h2 class="rv" data-i="s_h">Две студии. Одна команда.</h2>
+  <p class="sub rv" data-i="s_s">Mochilabstudios — главная студия. Motion делает программы, Clips — видео, а вместе они показывают, на что способны.</p>
+  <div class="web rv" id="web">
+    <a class="node" href="#programs"><small>01 · <span data-i="ch1">Программы</span></small><b>MochiLabsStudio Motion</b><span data-i="n1s">представляет MotionRecord</span></a>
+    <div class="link"><i></i></div>
+    <div class="node core"><small>03 · <span data-i="ch3">Студия</span></small><b>Mochilabstudios</b><span data-i="n2s">основная студия</span></div>
+    <div class="link"><i></i></div>
+    <a class="node" href="#videos"><small>02 · <span data-i="ch2">Видео</span></small><b>MochiLabsStudio Clips</b><span data-i="n3s">представляет ролики и тизеры</span></a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <span>© Mochi Labs Studios · GPL-3.0</span>
+  <span><a href="https://github.com/Zenka737/MotionRecord" target="_blank" rel="noopener noreferrer">GitHub</a></span>
+</div></footer>
+
+<div id="mochi" aria-hidden="true" data-mood="idle">
+  <div class="bub" id="bub"></div>
+  <div class="hop"><svg viewBox="0 0 200 200" width="100%" height="100%">
+    <g class="body"><rect x="30" y="80" width="140" height="108" rx="52" fill="#fff"/>
+      <ellipse class="cheek" cx="56" cy="152" rx="13" ry="8" fill="#000" opacity="0"/><ellipse class="cheek" cx="144" cy="152" rx="13" ry="8" fill="#000" opacity="0"/>
+      <g class="eyes">
+        <g class="e-open"><ellipse class="blink" cx="75" cy="128" rx="7.5" ry="13" fill="#000"/><ellipse class="blink" cx="125" cy="128" rx="7.5" ry="13" fill="#000"/></g>
+        <g class="e-happy"><path d="M63 132 Q75 117 87 132" stroke="#000" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M113 132 Q125 117 137 132" stroke="#000" stroke-width="6" stroke-linecap="round" fill="none"/></g>
+        <g class="e-wink"><ellipse class="blink" cx="75" cy="128" rx="7.5" ry="13" fill="#000"/><path d="M113 132 Q125 117 137 132" stroke="#000" stroke-width="6" stroke-linecap="round" fill="none"/></g>
+      </g></g>
+    <g class="hat"><path d="M64 86 C78 62 92 34 114 4 C113 36 124 62 138 86 Z" fill="#fff" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/>
+      <path d="M67 77 Q101 88 135 77 L139 86 Q101 97 63 86 Z" fill="#000"/>
+      <ellipse cx="101" cy="87" rx="54" ry="10" fill="#fff" stroke="#000" stroke-width="3.5"/></g>
+  </svg></div>
+</div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
